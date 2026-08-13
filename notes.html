@@ -28,8 +28,13 @@ button { font:inherit; }
 .brand i { color:var(--accent); font-style:normal; }
 .header-actions { display:flex; align-items:center; gap:14px; }
 .back-link { font-size:13px; font-weight:650; }
-.theme-toggle { width:38px; height:38px; display:grid; place-items:center; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; cursor:pointer; }
-.theme-icon { font-size:18px; line-height:1; }
+.theme-toggle { width:44px; height:44px; padding:0; display:grid; place-items:center; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; cursor:pointer; }
+.theme-icon { width:18px; height:18px; position:relative; display:grid; place-items:center; }
+.theme-icon svg { width:18px; height:18px; position:absolute; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; transition:opacity .24s ease, transform .28s cubic-bezier(.2,.8,.2,1), visibility .24s ease; }
+.theme-icon [data-theme-icon="moon"] { opacity:0; visibility:hidden; transform:rotate(-24deg) scale(.72); }
+html[data-theme="ink"] .theme-icon [data-theme-icon="sun"] { opacity:0; visibility:hidden; transform:rotate(24deg) scale(.72); }
+html[data-theme="ink"] .theme-icon [data-theme-icon="moon"] { opacity:1; visibility:visible; transform:rotate(0) scale(1); }
+.theme-toggle:focus-visible, .toc a:focus-visible, .back-link:focus-visible, .brand:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 .hero { padding:76px 0 56px; border-bottom:1px solid var(--line); }
 .eyebrow { margin:0 0 14px; color:var(--accent); font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; }
 h1,h2,h3,p { margin:0; }
@@ -40,8 +45,9 @@ h1 { max-width:840px; font-family:var(--serif); font-size:clamp(42px,7vw,80px); 
 .note-layout { display:grid; grid-template-columns:220px minmax(0,1fr); gap:64px; padding:54px 0 90px; }
 .toc { position:sticky; top:24px; height:max-content; padding:18px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); }
 .toc p { margin-bottom:9px; color:var(--muted); font-family:var(--mono); font-size:9px; letter-spacing:.13em; text-transform:uppercase; }
-.toc a { display:block; padding:6px 0; color:var(--ink-soft); font-size:12px; }
-.toc a:hover { color:var(--accent); }
+.toc a { display:block; padding:6px 0; color:var(--ink-soft); font-size:12px; transition:color .2s ease, transform .2s ease; }
+.toc a:hover, .toc a.is-current { color:var(--accent); }
+.toc a.is-current { font-weight:700; transform:translateX(3px); }
 .chapter { scroll-margin-top:24px; padding:0 0 46px; margin-bottom:46px; border-bottom:1px solid var(--line); }
 .chapter:last-child { border:0; }
 .chapter-kicker { margin-bottom:9px; color:var(--accent); font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
@@ -63,6 +69,10 @@ h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; 
   .toc a { display:inline-block; margin-right:14px; }
   .entry-grid { grid-template-columns:1fr; }
 }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  .toc a.is-current { transform:none; }
+}
   </style>
 </head>
 <body>
@@ -71,7 +81,7 @@ h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; 
       <a class="brand" href="index.html#top" aria-label="返回九尾首页">九尾<i>.</i></a>
       <div class="header-actions">
         <a class="back-link" href="index.html#works">← 返回项目</a>
-        <button class="theme-toggle" type="button" aria-label="切换到夜间模式" title="切换到夜间模式" data-theme-toggle><span class="theme-icon" aria-hidden="true">☼</span></button>
+        <button class="theme-toggle" type="button" aria-label="切换到夜间模式" title="切换到夜间模式" data-theme-toggle><span class="theme-icon" aria-hidden="true"><svg data-theme-icon="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"></path></svg><svg data-theme-icon="moon" viewBox="0 0 24 24"><path d="M20.7 15.4A8.6 8.6 0 0 1 8.6 3.3 8.6 8.6 0 1 0 20.7 15.4Z"></path></svg></span></button>
       </div>
     </div>
   </header>
@@ -89,10 +99,10 @@ h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; 
     <div class="shell note-layout">
       <nav class="toc" aria-label="笔记目录">
         <p>目录</p>
-        <a href="#foundation">需求与架构</a>
-        <a href="#assembly">配置与装配</a>
-        <a href="#workflow">工作流与执行</a>
-        <a href="#experience">工具、会话与 Skills</a>
+        <a href="#foundation" data-toc-link>需求与架构</a>
+        <a href="#assembly" data-toc-link>配置与装配</a>
+        <a href="#workflow" data-toc-link>工作流与执行</a>
+        <a href="#experience" data-toc-link>工具、会话与 Skills</a>
       </nav>
 
       <div>
@@ -154,22 +164,41 @@ h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; 
 (() => {
   const root = document.documentElement;
   const toggle = document.querySelector('[data-theme-toggle]');
-  const icon = toggle?.querySelector('.theme-icon');
   const stored = localStorage.getItem('jiuwei-theme');
   if (stored === 'ink') root.dataset.theme = 'ink';
-  const sync = () => {
+  const syncThemeToggle = () => {
     const dark = root.dataset.theme === 'ink';
     const label = dark ? '切换到日间模式' : '切换到夜间模式';
     toggle?.setAttribute('aria-label', label);
     toggle?.setAttribute('title', label);
-    if (icon) icon.textContent = dark ? '☾' : '☼';
   };
-  sync();
+  syncThemeToggle();
   toggle?.addEventListener('click', () => {
     if (root.dataset.theme === 'ink') { delete root.dataset.theme; localStorage.setItem('jiuwei-theme', 'cream'); }
     else { root.dataset.theme = 'ink'; localStorage.setItem('jiuwei-theme', 'ink'); }
-    sync();
+    syncThemeToggle();
   });
+  const tocLinks = [...document.querySelectorAll('[data-toc-link]')];
+  const chapters = [...document.querySelectorAll('.chapter[id]')];
+  const setCurrentChapter = (id, updateHash = false) => {
+    tocLinks.forEach((link) => {
+      const current = link.getAttribute('href') === `#${id}`;
+      link.classList.toggle('is-current', current);
+      if (current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    if (updateHash && window.location.hash !== `#${id}`) history.replaceState(null, '', `#${id}`);
+  };
+  const hashChapter = window.location.hash.slice(1);
+  const initialChapter = chapters.find((chapter) => chapter.id === hashChapter) || chapters[0];
+  if (initialChapter) setCurrentChapter(initialChapter.id);
+  if ('IntersectionObserver' in window) {
+    const chapterObserver = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (visible) setCurrentChapter(visible.target.id, true);
+    }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
+    chapters.forEach((chapter) => chapterObserver.observe(chapter));
+  }
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
 })();

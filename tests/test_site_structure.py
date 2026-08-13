@@ -36,6 +36,20 @@ class SiteStructureTests(unittest.TestCase):
             self.assertIn(token, html)
         self.assertNotIn("data-amount", html)
 
+    def test_notes_has_active_toc_and_shared_theme_control_contract(self):
+        html = NOTES.read_text(encoding="utf-8")
+        for token in (
+            "data-toc-link",
+            "IntersectionObserver",
+            "is-current",
+            'data-theme-icon="sun"',
+            'data-theme-icon="moon"',
+            "width:44px",
+            ":focus-visible",
+        ):
+            self.assertIn(token, html)
+        self.assertNotIn("window.addEventListener('scroll'", html)
+
     def test_fragment_links_resolve_and_confirmed_github_links_are_available(self):
         parser = LinkCollector()
         parser.feed(SITE.read_text(encoding="utf-8"))
