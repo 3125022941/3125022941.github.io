@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Agent Scaffold 的公开工程笔记：从需求、配置、装配节点到 MCP、会话和 Skills。" />
+  <meta name="theme-color" content="#f1eee7" />
+  <title>Agent Scaffold Notes - 九尾 Jiuwei</title>
+  <style>
+:root {
+  --page: #f1eee7; --surface: #f8f5ef; --surface-2: #e8e2d7; --ink: #151713;
+  --ink-soft: #4e5048; --muted: #77786e; --line: rgba(21,23,19,.13); --accent: #737b58;
+  --white: #fffdf9; --radius: 16px; --shell: min(1120px, calc(100% - 48px));
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", STSong, serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+html[data-theme="ink"] { --page:#12130f; --surface:#1b1d17; --surface-2:#24271f; --ink:#f1eee6; --ink-soft:#c7c5bb; --muted:#95988d; --line:rgba(241,238,230,.13); --accent:#aab18d; --white:#22241e; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; background:var(--page); }
+body { margin:0; color:var(--ink); background:var(--page); font-family:var(--sans); line-height:1.65; }
+a { color:inherit; text-decoration:none; }
+button { font:inherit; }
+.shell { width:var(--shell); margin-inline:auto; }
+.site-header { border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter:blur(14px); }
+.header-inner { min-height:76px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.brand { font-size:21px; font-weight:800; letter-spacing:.14em; }
+.brand i { color:var(--accent); font-style:normal; }
+.header-actions { display:flex; align-items:center; gap:14px; }
+.back-link { font-size:13px; font-weight:650; }
+.theme-toggle { width:38px; height:38px; display:grid; place-items:center; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; cursor:pointer; }
+.theme-icon { font-size:18px; line-height:1; }
+.hero { padding:76px 0 56px; border-bottom:1px solid var(--line); }
+.eyebrow { margin:0 0 14px; color:var(--accent); font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; }
+h1,h2,h3,p { margin:0; }
+h1 { max-width:840px; font-family:var(--serif); font-size:clamp(42px,7vw,80px); font-weight:500; line-height:1.04; letter-spacing:-.05em; }
+.hero-copy { max-width:720px; margin-top:22px; color:var(--muted); font-size:16px; }
+.note-meta { margin-top:30px; display:flex; flex-wrap:wrap; gap:9px; }
+.note-meta span { padding:5px 9px; border:1px solid var(--line); border-radius:999px; color:var(--ink-soft); font-family:var(--mono); font-size:9px; }
+.note-layout { display:grid; grid-template-columns:220px minmax(0,1fr); gap:64px; padding:54px 0 90px; }
+.toc { position:sticky; top:24px; height:max-content; padding:18px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); }
+.toc p { margin-bottom:9px; color:var(--muted); font-family:var(--mono); font-size:9px; letter-spacing:.13em; text-transform:uppercase; }
+.toc a { display:block; padding:6px 0; color:var(--ink-soft); font-size:12px; }
+.toc a:hover { color:var(--accent); }
+.chapter { scroll-margin-top:24px; padding:0 0 46px; margin-bottom:46px; border-bottom:1px solid var(--line); }
+.chapter:last-child { border:0; }
+.chapter-kicker { margin-bottom:9px; color:var(--accent); font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; line-height:1.12; letter-spacing:-.035em; }
+.chapter-intro { max-width:670px; margin-top:15px; color:var(--muted); }
+.entry-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:27px; }
+.entry { min-height:142px; padding:20px; background:var(--white); border:1px solid var(--line); border-radius:12px; }
+.entry small { display:block; color:var(--accent); font-family:var(--mono); font-size:9px; letter-spacing:.1em; }
+.entry h3 { margin-top:10px; font-family:var(--serif); font-size:20px; font-weight:500; line-height:1.22; }
+.entry p { margin-top:8px; color:var(--muted); font-size:12px; line-height:1.7; }
+.callout { margin-top:27px; padding:23px 25px; color:var(--ink-soft); background:var(--surface-2); border-left:3px solid var(--accent); }
+.callout strong { display:block; margin-bottom:5px; color:var(--ink); font-family:var(--serif); font-size:22px; font-weight:500; }
+.footer { padding:28px 0; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
+@media (max-width:760px) {
+  :root { --shell:min(100% - 32px, 1120px); }
+  .hero { padding:52px 0 40px; }
+  .note-layout { display:block; padding-top:32px; }
+  .toc { position:static; margin-bottom:35px; }
+  .toc a { display:inline-block; margin-right:14px; }
+  .entry-grid { grid-template-columns:1fr; }
+}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html#top" aria-label="返回九尾首页">九尾<i>.</i></a>
+      <div class="header-actions">
+        <a class="back-link" href="index.html#works">← 返回项目</a>
+        <button class="theme-toggle" type="button" aria-label="切换到夜间模式" title="切换到夜间模式" data-theme-toggle><span class="theme-icon" aria-hidden="true">☼</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">Agent Scaffold / Engineering Notes</p>
+        <h1>从配置表到可运行的 Agent。</h1>
+        <p class="hero-copy">这组笔记记录 Agent Scaffold 的完整构建路径：定义 Agent 配置，装配模型、工具和工作流，再通过会话接口把能力交给真实用户使用。</p>
+        <div class="note-meta"><span>Java 17</span><span>Spring AI</span><span>Google ADK</span><span>DDD</span><span>MCP</span><span>Skills</span></div>
+      </div>
+    </section>
+
+    <div class="shell note-layout">
+      <nav class="toc" aria-label="笔记目录">
+        <p>目录</p>
+        <a href="#foundation">需求与架构</a>
+        <a href="#assembly">配置与装配</a>
+        <a href="#workflow">工作流与执行</a>
+        <a href="#experience">工具、会话与 Skills</a>
+      </nav>
+
+      <div>
+        <section class="chapter" id="foundation">
+          <p class="chapter-kicker">Foundation</p>
+          <h2>先定义一种可以被装配的 Agent。</h2>
+          <p class="chapter-intro">起点不是单次对话，而是一套可描述 Agent、模型、工具和执行方式的结构。需求分析和系统架构先把边界、模块与配置模型固定下来。</p>
+          <div class="entry-grid">
+            <article class="entry"><small>00</small><h3>脚手架需求分析</h3><p>明确 Agent 配置、模块编排与执行框架的产品边界。</p></article>
+            <article class="entry"><small>01</small><h3>系统架构设计</h3><p>拆分基础能力、脚手架、Agent 框架、模块编排与工程结构。</p></article>
+            <article class="entry"><small>02-03</small><h3>工程初始化与 API 测试</h3><p>建立 Java 工程基础，并验证 Spring AI、LangChain4j 与 Google ADK 的接入边界。</p></article>
+            <article class="entry"><small>04-05</small><h3>配置表与装配域</h3><p>用 YAML 与结构化对象承载 Agent 的定义，为后续节点装配准备统一输入。</p></article>
+          </div>
+        </section>
+
+        <section class="chapter" id="assembly">
+          <p class="chapter-kicker">Assembly</p>
+          <h2>把配置逐层变成运行时对象。</h2>
+          <p class="chapter-intro">装配链路从 AI API、ChatModel、Agent 到 AgentWorkflow 逐步向下构建。每个节点只处理自己的职责，并把结果交给下一个节点。</p>
+          <div class="entry-grid">
+            <article class="entry"><small>06</small><h3>AiApiNode</h3><p>根据配置创建模型服务连接，为后续模型调用提供统一入口。</p></article>
+            <article class="entry"><small>07</small><h3>ChatModelNode</h3><p>组合模型参数与工具回调，形成可被 Agent 使用的 ChatModel。</p></article>
+            <article class="entry"><small>08-09</small><h3>AgentNode 与 AgentWorkflowNode</h3><p>创建单体 Agent，并将多个 Agent 组织为可执行的工作流。</p></article>
+            <article class="entry"><small>12</small><h3>加载与使用验证</h3><p>验证 YAML 配置能被完整装配并由运行服务正确加载。</p></article>
+          </div>
+          <aside class="callout"><strong>核心思路</strong>配置不是静态文档。它是 Agent 工程的输入语言，装配链路负责把它翻译成真实的模型、工具与执行对象。</aside>
+        </section>
+
+        <section class="chapter" id="workflow">
+          <p class="chapter-kicker">Workflow</p>
+          <h2>让 Agent 从一次回答走向一段流程。</h2>
+          <p class="chapter-intro">Runner 负责把具体 Agent 交给运行时。Sequential、Parallel 与 Loop 将执行模式显式化，让流程可以按配置组合和调整。</p>
+          <div class="entry-grid">
+            <article class="entry"><small>10</small><h3>Loop、Parallel、Sequential</h3><p>定义循环、并行和串行三种基础工作流结构。</p></article>
+            <article class="entry"><small>11</small><h3>RunnerNode</h3><p>将选定的 Agent 与运行入口连接，形成实际的执行起点。</p></article>
+            <article class="entry"><small>13</small><h3>增强 RunnerNode</h3><p>继续完善运行节点的装配能力与验证链路。</p></article>
+            <article class="entry"><small>14</small><h3>增强 AgentWorkflowNode</h3><p>使工作流节点可以承接更复杂的 Agent 编排需求。</p></article>
+          </div>
+        </section>
+
+        <section class="chapter" id="experience">
+          <p class="chapter-kicker">Capabilities</p>
+          <h2>工具、会话和 Skills 让工程进入真实场景。</h2>
+          <p class="chapter-intro">MCP、回调插件、多模态、会话服务与 UI 接口把脚手架从框架能力延伸到实际交互。Skills 则用领域步骤增强工具调用的可靠性。</p>
+          <div class="entry-grid">
+            <article class="entry"><small>15-16</small><h3>本地 MCP 与回调插件</h3><p>将本地工具与自定义回调接入 Agent 的工具集合。</p></article>
+            <article class="entry"><small>17</small><h3>多模态能力排查</h3><p>通过分块验证与源码调试，定位并修复多模态调用链问题。</p></article>
+            <article class="entry"><small>18-20</small><h3>会话服务与 UI 对接</h3><p>实现服务层、触发层和界面联调，使 Agent 能力以对话形式交付。</p></article>
+            <article class="entry"><small>21</small><h3>Skills 增强装配</h3><p>支持从资源或目录加载技能书，并与 MCP 工具一起进入 ChatModel 的回调集合。</p></article>
+          </div>
+          <aside class="callout"><strong>Skills 与 MCP 不是替代关系。</strong>工具提供可执行的外部能力，Skills 补充完成任务所需的领域步骤和上下文，两者共同提高 Agent 在真实场景中的可靠性。</aside>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="shell">© <span data-year></span> Jiuwei. Agent Scaffold Notes.</div></footer>
+  <script>
+(() => {
+  const root = document.documentElement;
+  const toggle = document.querySelector('[data-theme-toggle]');
+  const icon = toggle?.querySelector('.theme-icon');
+  const stored = localStorage.getItem('jiuwei-theme');
+  if (stored === 'ink') root.dataset.theme = 'ink';
+  const sync = () => {
+    const dark = root.dataset.theme === 'ink';
+    const label = dark ? '切换到日间模式' : '切换到夜间模式';
+    toggle?.setAttribute('aria-label', label);
+    toggle?.setAttribute('title', label);
+    if (icon) icon.textContent = dark ? '☾' : '☼';
+  };
+  sync();
+  toggle?.addEventListener('click', () => {
+    if (root.dataset.theme === 'ink') { delete root.dataset.theme; localStorage.setItem('jiuwei-theme', 'cream'); }
+    else { root.dataset.theme = 'ink'; localStorage.setItem('jiuwei-theme', 'ink'); }
+    sync();
+  });
+  const year = document.querySelector('[data-year]');
+  if (year) year.textContent = new Date().getFullYear();
+})();
+  </script>
+</body>
+</html>
