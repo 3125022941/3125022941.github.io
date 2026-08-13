@@ -48,7 +48,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
         )
         self.assertEqual(self.html.count("data-work-link"), 1)
         self.assertIn('href="https://github.com/3125022941/agent-scaffold"', self.html)
-        self.assertIn("详情整理中", self.html)
+        self.assertIn("筹备中", self.html)
 
     def test_current_build_uses_confirmed_agent_scaffold_facts(self):
         for text in ("Java 17", "Spring AI", "Google ADK", "DDD", "MCP", "Skills", "Workflow"):
@@ -70,7 +70,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             (
                 match
                 for match in re.finditer(
-                    r"\.primary-nav\s*\{(?P<rules>.*?)\n\s*\}",
+                    r"\.side-nav\s*\{(?P<rules>.*?)\n\s*\}",
                     self.html,
                     re.DOTALL,
                 )
@@ -79,7 +79,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             None,
         )
         open_nav = re.search(
-            r"\.primary-nav\.is-open\s*\{(?P<rules>.*?)\n\s*\}",
+            r"\.side-nav\.is-open\s*\{(?P<rules>.*?)\n\s*\}",
             self.html,
             re.DOTALL,
         )

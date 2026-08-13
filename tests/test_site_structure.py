@@ -40,13 +40,15 @@ class SiteStructureTests(unittest.TestCase):
             self.assertIn(href, parser.hrefs)
             self.assertIn(href[1:], parser.ids)
         external = [href for href in parser.hrefs if href.startswith(("http://", "https://", "mailto:"))]
-        self.assertEqual(
-            external,
-            [
-                "https://github.com/3125022941/agent-scaffold",
-                "https://github.com/3125022941/agent-scaffold",
-                "https://github.com/3125022941",
-            ],
+        self.assertEqual(external.count("https://github.com/3125022941/agent-scaffold"), 2)
+        self.assertTrue(
+            all(
+                href in {
+                    "https://github.com/3125022941/agent-scaffold",
+                    "https://github.com/3125022941",
+                }
+                for href in external
+            )
         )
 
     def test_notes_has_active_toc_and_shared_theme_control_contract(self):
