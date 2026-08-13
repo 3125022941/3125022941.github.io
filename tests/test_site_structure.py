@@ -60,20 +60,34 @@ class SiteStructureTests(unittest.TestCase):
             self.assertIn(token, html)
         self.assertNotIn("window.addEventListener('scroll'", html)
 
-    def test_agent_scaffold_notes_page_has_real_chapter_anchors(self):
+    def test_agent_scaffold_notes_page_preserves_every_source_document(self):
         self.assertTrue(NOTES.exists())
         parser = LinkCollector()
         notes_html = NOTES.read_text(encoding="utf-8")
         parser.feed(notes_html)
-        for chapter in ("foundation", "assembly", "workflow", "experience"):
-            self.assertIn(chapter, parser.ids)
-            self.assertIn(f"#{chapter}", parser.hrefs)
+        for chapter in range(22):
+            note_id = f"note-{chapter:02d}"
+            self.assertIn(note_id, parser.ids)
+            self.assertIn(f"#{note_id}", parser.hrefs)
+        self.assertEqual(notes_html.count('class="note-document"'), 22)
+        for source_text in (
+            "脚手架需求分析",
+            "系统架构设计",
+            "2025年11月27日",
+            "增强装配-本地mcp",
+            "增强装配-skills",
+            "Fk9607eOLBhpNS2N3nB2y_70lU2l",
+        ):
+            self.assertIn(source_text, notes_html)
+        self.assertNotIn("DElk89iu8Ehhnbu", notes_html)
+        self.assertNotIn("file:///Users/fuzhengwei", notes_html)
+        self.assertNotIn('href="http:/#"', notes_html)
         index_html = SITE.read_text(encoding="utf-8")
         for href in (
-            "notes.html#foundation",
-            "notes.html#assembly",
-            "notes.html#workflow",
-            "notes.html#experience",
+            "notes.html#note-00",
+            "notes.html#note-06",
+            "notes.html#note-10",
+            "notes.html#note-15",
         ):
             self.assertIn(href, index_html)
 
