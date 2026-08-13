@@ -1,0 +1,80 @@
+from html.parser import HTMLParser
+from pathlib import Path
+import unittest
+
+
+SITE = Path(__file__).resolve().parents[1] / "index.html"
+NOTES = Path(__file__).resolve().parents[1] / "notes.html"
+
+
+class LinkCollector(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = set()
+        self.hrefs = []
+
+    def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        if "id" in attributes:
+            self.ids.add(attributes["id"])
+        if tag == "a" and "href" in attributes:
+            self.hrefs.append(attributes["href"])
+
+
+class SiteStructureTests(unittest.TestCase):
+    def test_homepage_projects_and_focus_controls_have_real_destinations(self):
+        html = SITE.read_text(encoding="utf-8")
+        self.assertEqual(html.count("data-work-link"), 3)
+        self.assertIn('href="notes.html"', html)
+        self.assertIn("data-focus-option", html)
+        self.assertIn("data-focus-copy", html)
+        self.assertIn('aria-pressed="true"', html)
+
+    def test_fragment_links_resolve_and_confirmed_github_links_are_available(self):
+        parser = LinkCollector()
+        parser.feed(SITE.read_text(encoding="utf-8"))
+        fragments = [href[1:] for href in parser.hrefs if href.startswith("#")]
+        self.assertTrue(fragments)
+        self.assertTrue(all(fragment in parser.ids for fragment in fragments))
+        external = [href for href in parser.hrefs if href.startswith(("http://", "https://", "mailto:"))]
+        self.assertEqual(
+            external,
+            [
+                "https://github.com/3125022941/agent-scaffold",
+                "https://github.com/3125022941",
+            ],
+        )
+
+    def test_agent_scaffold_notes_page_has_real_chapter_anchors(self):
+        self.assertTrue(NOTES.exists())
+        parser = LinkCollector()
+        notes_html = NOTES.read_text(encoding="utf-8")
+        parser.feed(notes_html)
+        for chapter in ("foundation", "assembly", "workflow", "experience"):
+            self.assertIn(chapter, parser.ids)
+            self.assertIn(f"#{chapter}", parser.hrefs)
+
+        index_html = SITE.read_text(encoding="utf-8")
+        for href in (
+            "notes.html#foundation",
+            "notes.html#assembly",
+            "notes.html#workflow",
+            "notes.html#experience",
+        ):
+            self.assertIn(href, index_html)
+
+        for note in (
+            "脚手架需求分析",
+            "系统架构设计",
+            "AiApiNode",
+            "ChatModelNode",
+            "AgentWorkflowNode",
+            "RunnerNode",
+            "本地 MCP 与回调插件",
+            "Skills 增强装配",
+        ):
+            self.assertIn(note, notes_html)
+
+
+if __name__ == "__main__":
+    unittest.main()

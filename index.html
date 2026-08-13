@@ -644,6 +644,24 @@ html[data-theme="ink"] .studio-illustration {
   box-shadow: var(--shadow-card);
 }
 
+.work-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.work-card-link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.work-card .round-link {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .work-art {
   position: relative;
   height: 270px;
@@ -2627,6 +2645,7 @@ html[data-theme="ink"] .studio-illustration {
 
         <div class="works-grid">
           <article class="work-card reveal">
+            <a class="work-card-link" data-work-link href="https://github.com/3125022941/agent-scaffold" target="_blank" rel="noreferrer" aria-label="打开 Agent Scaffold GitHub 仓库"></a>
             <div class="work-art work-art-agent" aria-hidden="true">
               <div class="mini-brand">AI AGENT SCAFFOLD</div>
               <div class="mind-copy">
@@ -2647,11 +2666,12 @@ html[data-theme="ink"] .studio-illustration {
               <h3>Agent Scaffold</h3>
               <p>一个基于 Java 17、Spring AI 与 Google ADK 的多模块 Agent 工程底座，组织 DDD 分层、MCP 工具接入、Skills 与工作流编排。</p>
               <div class="tag-row"><span>Java 17</span><span>Spring AI</span><span>Google ADK</span><span>DDD</span><span>MCP</span></div>
-              <a class="round-link" href="https://github.com/3125022941/agent-scaffold" target="_blank" rel="noreferrer" aria-label="打开 Agent Scaffold GitHub 仓库">↗</a>
+              <span class="round-link" aria-hidden="true">↗</span>
             </div>
           </article>
 
           <article class="work-card reveal">
+            <a class="work-card-link" data-work-link href="#build" aria-label="查看 AI Architecture Canvas 的系统位置"></a>
             <div class="work-art work-art-paper" aria-hidden="true">
               <div class="paper-sidebar"><b>A</b><i></i><i></i><i></i><i></i></div>
               <div class="paper-main">
@@ -2670,11 +2690,12 @@ html[data-theme="ink"] .studio-illustration {
               <h3>AI Architecture Canvas</h3>
               <p>把自然语言需求与当前画布上下文转成可继续编辑的 Draw.io XML，让架构图成为可对话、可迭代的工作界面。</p>
               <div class="tag-row"><span>AI</span><span>Draw.io XML</span><span>Canvas</span></div>
-              <a class="round-link" href="#build" aria-label="查看 AI Architecture Canvas 在系统地图中的位置">↗</a>
+              <span class="round-link" aria-hidden="true">↗</span>
             </div>
           </article>
 
           <article class="work-card reveal">
+            <a class="work-card-link" data-work-link href="#build" aria-label="查看 Agent Ops 的系统位置"></a>
             <div class="work-art work-art-flow" aria-hidden="true">
               <div class="flow-grid"></div>
               <svg viewBox="0 0 520 260" preserveAspectRatio="none">
@@ -2690,7 +2711,7 @@ html[data-theme="ink"] .studio-illustration {
               <h3>Agent Ops</h3>
               <p>从聊天请求到 Agent 装配、ReAct 工具调用，再到 MCP、SSH 与 MySQL 持久化，构建面向日常运维的受控执行链路。</p>
               <div class="tag-row"><span>ReAct</span><span>MCP</span><span>SSH</span><span>MySQL</span></div>
-              <a class="round-link" href="#build" aria-label="查看 Agent Ops 在系统地图中的位置">↗</a>
+              <span class="round-link" aria-hidden="true">↗</span>
             </div>
           </article>
         </div>
@@ -2767,7 +2788,7 @@ html[data-theme="ink"] .studio-illustration {
       <section class="section support-section" id="support" aria-labelledby="support-title">
         <div class="support-grid">
           <div class="support-intro reveal"><span class="section-index">Principles</span><p class="section-kicker">Working principles</p><h2 id="support-title">LEARN / AUTOMATE</h2><p>理解设计，构建系统，让好的行为能够持续发生。</p><a class="quiet-link" href="#works">See it in the work <span aria-hidden="true">→</span></a></div>
-          <div class="fund-card reveal"><p>当前关注</p><div class="fund-amount"><strong>LEARN</strong><span> × BUILD</span></div><div class="support-options" data-support-options><button type="button" data-amount="learn" data-label="LEARN" class="is-selected">LEARN</button><button type="button" data-amount="build" data-label="BUILD">BUILD</button><button type="button" data-amount="automate" data-label="AUTOMATE">AUTOMATE</button></div><button class="button button-dark support-cta" type="button" data-support-cta>当前方向 · LEARN</button><p class="fund-note">选择一个视角，看看它如何进入下一次实验。</p></div>
+          <div class="fund-card reveal"><p>当前关注</p><div class="fund-amount"><strong>LEARN</strong><span> × BUILD</span></div><div class="support-options" data-support-options><button type="button" data-focus-option data-focus="learn" aria-pressed="true" class="is-selected">LEARN</button><button type="button" data-focus-option data-focus="build" aria-pressed="false">BUILD</button><button type="button" data-focus-option data-focus="automate" aria-pressed="false">AUTOMATE</button></div><p class="fund-note" data-focus-copy data-focus-copy-for="learn">理解系统如何被设计，再把理解沉淀成笔记。</p><p class="fund-note" data-focus-copy data-focus-copy-for="build" hidden>把理解转成可以运行、可以迭代的 Agent 工程。</p><p class="fund-note" data-focus-copy data-focus-copy-for="automate" hidden>把可靠的重复动作交给可控的自动化流程。</p><a class="button button-dark support-cta" href="notes.html" data-focus-cta>阅读 Agent Scaffold 笔记</a></div>
           <div class="fund-use reveal"><p class="support-label">LEARN</p><ul><li><span>01</span> 理解不同设计为什么成立</li><li><span>02</span> 比较结构、边界与取舍</li><li><span>03</span> 用项目验证理解</li></ul></div>
           <div class="supporters reveal"><p class="support-label">AUTOMATE</p><ul><li><span class="supporter-avatar one">A</span><div><strong>让自动化承接重复工作</strong><small>把一次性的正确动作变成可持续行为</small></div></li><li><span class="supporter-avatar two">∞</span><div><strong>持续而不是偶发</strong><small>用系统减少意志力消耗</small></div></li></ul><p class="thanks">Sustainable behavior <span aria-hidden="true">↗</span></p></div>
           <blockquote class="support-quote reveal"><span class="quote-mark">“</span><p>Understand deeply.<br />Automate wisely.</p><div class="quote-sprig" aria-hidden="true"></div></blockquote>
