@@ -190,12 +190,27 @@ h2 { font-family:var(--serif); font-size:clamp(29px,4vw,45px); font-weight:500; 
     if (updateHash && window.location.hash !== `#${id}`) history.replaceState(null, '', `#${id}`);
   };
   const hashChapter = window.location.hash.slice(1);
+  let tocHashReady = !hashChapter;
+  window.requestAnimationFrame(() => window.requestAnimationFrame(() => { tocHashReady = true; }));
   const initialChapter = chapters.find((chapter) => chapter.id === hashChapter) || chapters[0];
   if (initialChapter) setCurrentChapter(initialChapter.id);
+  const findCurrentChapter = () => {
+    const readingLine = window.innerHeight * .28;
+    for (let index = chapters.length - 1; index >= 0; index -= 1) {
+      const chapter = chapters[index];
+      const bounds = chapter.getBoundingClientRect();
+      if (bounds.top <= readingLine && bounds.bottom > readingLine) return chapter;
+    }
+    return chapters.find((chapter) => chapter.getBoundingClientRect().top > readingLine) || chapters[chapters.length - 1];
+  };
   if ('IntersectionObserver' in window) {
-    const chapterObserver = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (visible) setCurrentChapter(visible.target.id, true);
+    const chapterObserver = new IntersectionObserver(() => {
+      if (!tocHashReady && hashChapter) {
+        setCurrentChapter(hashChapter);
+        return;
+      }
+      const currentChapter = findCurrentChapter();
+      if (currentChapter) setCurrentChapter(currentChapter.id, true);
     }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
     chapters.forEach((chapter) => chapterObserver.observe(chapter));
   }

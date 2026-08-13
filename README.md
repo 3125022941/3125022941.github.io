@@ -1,19 +1,19 @@
-# Jiuwei Personal Site
+# Jiuwei personal site
 
-A static personal website for Jiuwei.
+Jiuwei's static portfolio and Agent Scaffold engineering notes.
 
 ## Local preview
 
 Run from this folder:
 
 ```powershell
-py serve.py
+python serve.py
 ```
 
-Then open http://127.0.0.1:8080.
+Then open http://127.0.0.1:8080/.
 
-## Before publishing
+## Published site
 
-Before publishing, add real project, blog, email, and social links as they become available.
+https://3125022941.github.io/
 
-This is a dependency-free static site and can be deployed to Vercel, Netlify, or GitHub Pages.
+This dependency-free site is published with GitHub Pages.

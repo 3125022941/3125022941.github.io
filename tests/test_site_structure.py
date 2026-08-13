@@ -35,6 +35,7 @@ class SiteStructureTests(unittest.TestCase):
         for token in ("const focusContent = {", "notes.html", "#works", "#build"):
             self.assertIn(token, html)
         self.assertNotIn("data-amount", html)
+        self.assertIn("document.querySelector('[data-focus-cta]')", html)
 
     def test_notes_has_active_toc_and_shared_theme_control_contract(self):
         html = NOTES.read_text(encoding="utf-8")
@@ -49,6 +50,20 @@ class SiteStructureTests(unittest.TestCase):
         ):
             self.assertIn(token, html)
         self.assertNotIn("window.addEventListener('scroll'", html)
+        self.assertIn("const findCurrentChapter", html)
+        self.assertIn("let tocHashReady = !hashChapter", html)
+
+    def test_homepage_theme_control_has_a_44px_touch_target(self):
+        html = SITE.read_text(encoding="utf-8")
+        theme_rules = html.split(".theme-toggle {", 1)[1].split("}", 1)[0]
+        self.assertIn("width: 44px", theme_rules)
+        self.assertIn("height: 44px", theme_rules)
+
+    def test_readme_describes_jiuwei_site_and_local_preview(self):
+        readme = (SITE.parent / "README.md").read_text(encoding="utf-8")
+        self.assertIn("Jiuwei", readme)
+        self.assertIn("python serve.py", readme)
+        self.assertIn("https://3125022941.github.io/", readme)
 
     def test_fragment_links_resolve_and_confirmed_github_links_are_available(self):
         parser = LinkCollector()
