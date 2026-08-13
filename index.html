@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="九尾的个人构建现场：学习 AI、系统与工程，并把过程变成可运行的项目、代码和公开笔记。" />
   <meta name="theme-color" content="#f2efe8" />
-  <meta property="og:title" content="九尾 Jiuwei — AI Builder" />
+  <meta property="og:title" content="九尾 Jiuwei - AI Builder" />
   <meta property="og:description" content="用 AI 构建东西，也试着理解它们为什么这样被设计。" />
   <meta property="og:type" content="website" />
-  <title>九尾 Jiuwei — AI Builder</title>
+  <title>九尾 Jiuwei - AI Builder</title>
   <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiMxNzE5MTQiLz4KICA8cGF0aCBkPSJNMTcgNDZWMThoMTMuN2M3LjIgMCAxMS44IDMuOCAxMS44IDEwIDAgNC40LTIuNCA3LjUtNi41IDlsMTAgOUgzNS44bC04LjItOC4ySDI1VjQ2SDE3Wm04LTE1aDUuMmMyLjggMCA0LjUtMS4yIDQuNS0zLjMgMC0yLjItMS43LTMuNC00LjUtMy40SDI1VjMxWiIgZmlsbD0iI2YzZWZlNiIvPgogIDxjaXJjbGUgY3g9IjQ4IiBjeT0iNDYiIHI9IjMiIGZpbGw9IiM4NzkxNmEiLz4KPC9zdmc+Cg==" type="image/svg+xml" />
   <script>document.documentElement.classList.add("js");</script>
   <style>
@@ -1057,6 +1057,67 @@ html[data-theme="ink"] .studio-illustration {
   margin-top: 12px;
   color: var(--muted);
   font-size: 13px;
+}
+
+.system-map {
+  min-height: 100%;
+  padding: clamp(25px, 3vw, 38px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--surface-2);
+  border-left: 1px solid var(--line);
+}
+
+.system-map-kicker,
+.system-map-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.system-map-kicker {
+  color: var(--accent);
+}
+
+.system-map-note {
+  max-width: 235px;
+  color: var(--muted);
+  line-height: 1.7;
+  letter-spacing: .02em;
+  text-transform: none;
+}
+
+.system-map-list {
+  display: grid;
+  gap: 15px;
+  margin: 28px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.system-map-list li {
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+}
+
+.system-map-list strong,
+.system-map-list span {
+  display: block;
+}
+
+.system-map-list strong {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.system-map-list span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
 }
 
 .progress-wrap {
@@ -2304,6 +2365,10 @@ html[data-theme="ink"] .studio-illustration {
     min-height: 420px;
   }
 
+  .system-map {
+    min-height: 420px;
+  }
+
   .note-row {
     min-height: 88px;
     grid-template-columns: 68px 1fr;
@@ -2543,8 +2608,8 @@ html[data-theme="ink"] .studio-illustration {
 
         <div class="hero-status glass-card">
           <span class="status-label">目前状态</span>
-          <strong><span class="status-pulse"></span> BUILDING</strong>
-          <span>Agent Scaffold · Build in public</span>
+          <strong>SHIPPED SYSTEMS</strong>
+          <span>Agent engineering · Open source</span>
         </div>
       </div>
     </section>
@@ -2553,11 +2618,11 @@ html[data-theme="ink"] .studio-illustration {
       <section class="section section-works" id="works" aria-labelledby="works-title">
         <div class="section-heading reveal">
           <div>
-            <span class="section-index">01</span>
-            <p class="section-kicker">Current works</p>
-            <h2 id="works-title">正在做的项目</h2>
+            <span class="section-index">Works</span>
+            <p class="section-kicker">Published systems</p>
+            <h2 id="works-title">已发布的项目</h2>
           </div>
-          <a class="quiet-link" href="#build">Follow the build <span aria-hidden="true">→</span></a>
+          <a class="quiet-link" href="#build">See the system map <span aria-hidden="true">→</span></a>
         </div>
 
         <div class="works-grid">
@@ -2578,9 +2643,9 @@ html[data-theme="ink"] .studio-illustration {
               <span class="art-number">001</span>
             </div>
             <div class="work-body">
-              <div class="work-meta"><span>BUILDING</span><span>Java 17</span></div>
+              <div class="work-meta"><span>OPEN SOURCE</span><span>Java 17</span></div>
               <h3>Agent Scaffold</h3>
-              <p>一个基于 Java 17、Spring AI 与 Google ADK 的多模块 AI Agent 脚手架，围绕 DDD 分层、MCP 工具接入与工作流编排组织。</p>
+              <p>一个基于 Java 17、Spring AI 与 Google ADK 的多模块 Agent 工程底座，组织 DDD 分层、MCP 工具接入、Skills 与工作流编排。</p>
               <div class="tag-row"><span>Java 17</span><span>Spring AI</span><span>Google ADK</span><span>DDD</span><span>MCP</span></div>
               <a class="round-link" href="https://github.com/3125022941/agent-scaffold" target="_blank" rel="noreferrer" aria-label="打开 Agent Scaffold GitHub 仓库">↗</a>
             </div>
@@ -2601,11 +2666,11 @@ html[data-theme="ink"] .studio-illustration {
               <span class="art-number">002</span>
             </div>
             <div class="work-body">
-              <div class="work-meta"><span>EXPLORING</span><span>2026</span></div>
+              <div class="work-meta"><span>SHIPPED</span><span>Draw.io</span></div>
               <h3>AI Architecture Canvas</h3>
-              <p>尝试让 AI 从需求、代码或自然语言中理解系统结构，并生成可继续编辑的架构图。</p>
-              <div class="tag-row"><span>AI</span><span>Systems</span><span>Architecture</span></div>
-              <a class="round-link" href="#garden" aria-label="查看 AI Architecture Canvas 探索方向">↗</a>
+              <p>把自然语言需求与当前画布上下文转成可继续编辑的 Draw.io XML，让架构图成为可对话、可迭代的工作界面。</p>
+              <div class="tag-row"><span>AI</span><span>Draw.io XML</span><span>Canvas</span></div>
+              <a class="round-link" href="#build" aria-label="查看 AI Architecture Canvas 在系统地图中的位置">↗</a>
             </div>
           </article>
 
@@ -2615,16 +2680,17 @@ html[data-theme="ink"] .studio-illustration {
               <svg viewBox="0 0 520 260" preserveAspectRatio="none">
                 <path d="M60 130 C110 130 120 62 180 62 S245 116 284 116 S350 58 404 58" fill="none" stroke="#a2947d" stroke-width="2" />
                 <path d="M180 62 C205 62 208 190 272 190 S350 176 454 176" fill="none" stroke="#a2947d" stroke-width="2" />
-                <g fill="#171812"><rect x="35" y="112" width="58" height="35" rx="7" /><rect x="150" y="44" width="62" height="35" rx="7" /><rect x="252" y="98" width="64" height="35" rx="7" /><rect x="426" y="158" width="62" height="35" rx="7" /></g>
-                <g fill="#f0ece4" font-family="Arial" font-size="10" text-anchor="middle"><text x="64" y="134">LEARN</text><text x="181" y="66">BUILD</text><text x="284" y="120">SHIP</text><text x="457" y="180">REVIEW</text></g>
+                <g fill="#171812"><rect x="35" y="112" width="62" height="35" rx="7" /><rect x="150" y="44" width="68" height="35" rx="7" /><rect x="252" y="98" width="64" height="35" rx="7" /><rect x="426" y="158" width="62" height="35" rx="7" /></g>
+                <g fill="#f0ece4" font-family="Arial" font-size="9" text-anchor="middle"><text x="66" y="134">REQUEST</text><text x="184" y="66">GUARD</text><text x="284" y="120">MCP</text><text x="457" y="180">SSH</text></g>
               </svg>
-              <span class="art-number">NEXT</span>
+              <span class="art-number">003</span>
             </div>
             <div class="work-body">
-              <div class="work-meta"><span>FUTURE DIRECTIONS</span><span>OPEN</span></div>
-              <h3>下一步想去的地方</h3>
-              <p><strong>Agent 运维</strong> — 观察、评估并持续维护运行中的 Agent。</p>
-              <p><strong>AgentCode 编码</strong> — 探索 Agent 驱动的软件工程工作流。</p>
+              <div class="work-meta"><span>SHIPPED</span><span>Spring Boot</span></div>
+              <h3>Agent Ops</h3>
+              <p>从聊天请求到 Agent 装配、ReAct 工具调用，再到 MCP、SSH 与 MySQL 持久化，构建面向日常运维的受控执行链路。</p>
+              <div class="tag-row"><span>ReAct</span><span>MCP</span><span>SSH</span><span>MySQL</span></div>
+              <a class="round-link" href="#build" aria-label="查看 Agent Ops 在系统地图中的位置">↗</a>
             </div>
           </article>
         </div>
@@ -2633,50 +2699,50 @@ html[data-theme="ink"] .studio-illustration {
       <div class="section-split">
         <section class="section split-panel build-panel" id="build" aria-labelledby="build-title">
           <div class="section-heading compact reveal">
-            <div><span class="section-index">02</span><p class="section-kicker">Current build</p><h2 id="build-title">Agent Scaffold</h2></div>
+            <div><span class="section-index">Systems</span><p class="section-kicker">How the work connects</p><h2 id="build-title">从脚手架到真实场景</h2></div>
           </div>
           <article class="build-card reveal">
             <div class="build-copy">
-              <p class="live-label"><span></span> BUILDING · Build in public</p>
-              <h3>让第一个 Agent 真正跑起来</h3>
-              <p>先把可复用的结构做小、做清楚，再用真实 Agent 验证抽象是否成立。</p>
-              <div class="progress-wrap"><div class="progress-label"><span>当前阶段</span><strong>FOUNDATION</strong></div><div class="progress-track"><span style="width:68%"></span></div></div>
+              <p class="live-label">AGENT ENGINEERING</p>
+              <h3>让 Agent 能被配置、控制和继续使用</h3>
+              <p>从通用的 Agent 结构出发，把工具调用、受控执行和可编辑界面串成一条可复用的工程路径。</p>
               <dl class="build-list">
-                <div><dt>最近完成</dt><dd>Agent 基础结构 · Tools abstraction · Workflow organization</dd></div>
-                <div><dt>正在追问</dt><dd>Memory 应该放在哪里？脚手架应该抽象到什么程度？</dd></div>
-                <div><dt>下一步</dt><dd>第一个真实 Agent · architecture整理 · Build Log</dd></div>
+                <div><dt>Foundation</dt><dd>Agent Scaffold 提供 DDD、Tools、Skills 与 Workflow 的可配置底座</dd></div>
+                <div><dt>Operate</dt><dd>Agent Ops 把自然语言指令转为带边界的 MCP 与 SSH 执行</dd></div>
+                <div><dt>Visualize</dt><dd>Architecture Canvas 让系统理解沉淀为可编辑的 Draw.io 图</dd></div>
               </dl>
               <a class="text-link strong-link" href="#notes">Read Build Notes <span aria-hidden="true">→</span></a>
             </div>
-            <div class="build-console" aria-label="Agent Scaffold 构建日志摘要">
-              <div class="console-top"><span></span><span></span><span></span><b>agent-scaffold.log</b></div>
-              <div class="console-lines">
-                <p><em>› RECENT</em></p><p>Agent 基础结构</p><p>Tools abstraction</p><p>Workflow organization</p>
-                <p><em>› QUESTIONS</em></p><p>Memory placement?</p><p>How much abstraction?</p>
-                <p><em>› NEXT</em></p><p>first real Agent</p><p>architecture整理 · Build Log</p>
-              </div>
-              <div class="mini-map" aria-hidden="true"><span class="map-center">Agent</span><span style="--x:22%;--y:26%">Tools</span><span style="--x:72%;--y:22%">Context</span><span style="--x:16%;--y:72%">Memory</span><span style="--x:74%;--y:74%">Workflow</span><i class="line-a"></i><i class="line-b"></i><i class="line-c"></i><i class="line-d"></i></div>
+            <div class="system-map" aria-label="Agent 系统路径">
+              <p class="system-map-kicker">System map</p>
+              <ol class="system-map-list">
+                <li><strong>Agent Scaffold</strong><span>配置、装配与工作流</span></li>
+                <li><strong>Agent Ops</strong><span>受控工具调用与运维执行</span></li>
+                <li><strong>AI Architecture Canvas</strong><span>需求到可编辑架构图</span></li>
+                <li><strong>MobileOpenClaw</strong><span>Android 网关与人工接管</span></li>
+              </ol>
+              <p class="system-map-note">同一套 Agent 工程能力，在不同场景中落地。</p>
             </div>
           </article>
         </section>
 
         <section class="section split-panel notes-panel" id="notes" aria-labelledby="notes-title">
           <div class="section-heading compact reveal">
-            <div><span class="section-index">03</span><p class="section-kicker">Public notes</p><h2 id="notes-title">Notes</h2></div>
+            <div><span class="section-index">Notes</span><p class="section-kicker">Engineering notes</p><h2 id="notes-title">Notes</h2></div>
             <a class="quiet-link" href="#notes">Four lenses <span aria-hidden="true">→</span></a>
           </div>
           <div class="notes-list reveal">
-            <a class="note-row" href="#notes"><time>01</time><div><h3>理解为什么</h3><p>拆解设计选择、边界和上下文。</p></div><span>UNDERSTAND</span></a>
-            <a class="note-row" href="#notes"><time>02</time><div><h3>把它做出来</h3><p>记录实现、代码和可运行结果。</p></div><span>BUILD</span></a>
-            <a class="note-row" href="#notes"><time>03</time><div><h3>让行为持续</h3><p>把重复工作变成可靠的自动化。</p></div><span>AUTOMATE</span></a>
-            <a class="note-row" href="#notes"><time>04</time><div><h3>回看与修正</h3><p>复盘过程，保留判断与教训。</p></div><span>REVIEW</span></a>
+            <a class="note-row" href="#notes"><time>Agent</time><div><h3>Agent 是如何被装配的？</h3><p>从 YAML、Tools、Skills 到 Workflow 的运行路径。</p></div><span>FOUNDATION</span></a>
+            <a class="note-row" href="#notes"><time>Ops</time><div><h3>一次受控 SSH 调用如何发生？</h3><p>从聊天输入到 ReAct、MCP、SSH 与持久化。</p></div><span>OPERATE</span></a>
+            <a class="note-row" href="#notes"><time>Canvas</time><div><h3>从需求到可编辑的架构图</h3><p>让 AI 生成 Draw.io XML，也理解现有画布。</p></div><span>VISUALIZE</span></a>
+            <a class="note-row" href="#notes"><time>Mobile</time><div><h3>手机龙虾如何连接 Agent 与 Android？</h3><p>用手机端网关执行动作，并在需要时交给人。</p></div><span>EXTEND</span></a>
           </div>
         </section>
       </div>
 
       <div class="section-split lower-split">
         <section class="section split-panel garden-panel" id="garden" aria-labelledby="garden-title">
-          <div class="section-heading compact reveal"><div><span class="section-index">04</span><p class="section-kicker">Exploration map</p><h2 id="garden-title">X-PLORE / Re:CS</h2></div></div>
+          <div class="section-heading compact reveal"><div><span class="section-index">Map</span><p class="section-kicker">Exploration map</p><h2 id="garden-title">X-PLORE / Re:CS</h2></div></div>
           <p class="section-intro reveal">把计算机科学重新走一遍：不是课程清单，而是一张会随着项目持续生长的理解地图。</p>
           <div class="garden-map reveal" aria-label="九尾的 Re:CS 探索地图">
             <svg viewBox="0 0 720 360" role="img" aria-hidden="true">
@@ -2689,7 +2755,7 @@ html[data-theme="ink"] .studio-illustration {
         </section>
 
         <section class="section split-panel friends-panel" id="friends" aria-labelledby="friends-title">
-          <div class="section-heading compact reveal"><div><span class="section-index">05</span><p class="section-kicker">Friends</p><h2 id="friends-title">一起探索的人</h2></div></div>
+          <div class="section-heading compact reveal"><div><span class="section-index">People</span><p class="section-kicker">Friends</p><h2 id="friends-title">一起探索的人</h2></div></div>
           <p class="section-intro reveal">这里会留下值得长期关注的朋友、开源项目与共同实验。先从真实的连接开始。</p>
           <div class="friends-grid">
             <article class="friend-card reveal"><div class="avatar avatar-a" aria-hidden="true"><span></span></div><div class="friend-title"><h3>Open Source</h3><p>Learn in public</p></div><p>阅读代码、提出问题，也把自己的实验放回公共空间。</p></article>
@@ -2700,8 +2766,8 @@ html[data-theme="ink"] .studio-illustration {
 
       <section class="section support-section" id="support" aria-labelledby="support-title">
         <div class="support-grid">
-          <div class="support-intro reveal"><span class="section-index">06</span><p class="section-kicker">Working principles</p><h2 id="support-title">LEARN / AUTOMATE</h2><p>理解设计，构建系统，让好的行为能够持续发生。</p><a class="quiet-link" href="#works">See it in the work <span aria-hidden="true">→</span></a></div>
-          <div class="fund-card reveal"><p>当前关注</p><div class="fund-amount"><strong>LEARN</strong><span> × BUILD</span></div><div class="progress-track large"><span style="width:72%"></span></div><div class="support-options" data-support-options><button type="button" data-amount="learn" data-label="LEARN" class="is-selected">LEARN</button><button type="button" data-amount="build" data-label="BUILD">BUILD</button><button type="button" data-amount="automate" data-label="AUTOMATE">AUTOMATE</button></div><button class="button button-dark support-cta" type="button" data-support-cta>当前方向 · LEARN</button><p class="fund-note">选择一个视角，看看它如何进入下一次实验。</p></div>
+          <div class="support-intro reveal"><span class="section-index">Principles</span><p class="section-kicker">Working principles</p><h2 id="support-title">LEARN / AUTOMATE</h2><p>理解设计，构建系统，让好的行为能够持续发生。</p><a class="quiet-link" href="#works">See it in the work <span aria-hidden="true">→</span></a></div>
+          <div class="fund-card reveal"><p>当前关注</p><div class="fund-amount"><strong>LEARN</strong><span> × BUILD</span></div><div class="support-options" data-support-options><button type="button" data-amount="learn" data-label="LEARN" class="is-selected">LEARN</button><button type="button" data-amount="build" data-label="BUILD">BUILD</button><button type="button" data-amount="automate" data-label="AUTOMATE">AUTOMATE</button></div><button class="button button-dark support-cta" type="button" data-support-cta>当前方向 · LEARN</button><p class="fund-note">选择一个视角，看看它如何进入下一次实验。</p></div>
           <div class="fund-use reveal"><p class="support-label">LEARN</p><ul><li><span>01</span> 理解不同设计为什么成立</li><li><span>02</span> 比较结构、边界与取舍</li><li><span>03</span> 用项目验证理解</li></ul></div>
           <div class="supporters reveal"><p class="support-label">AUTOMATE</p><ul><li><span class="supporter-avatar one">A</span><div><strong>让自动化承接重复工作</strong><small>把一次性的正确动作变成可持续行为</small></div></li><li><span class="supporter-avatar two">∞</span><div><strong>持续而不是偶发</strong><small>用系统减少意志力消耗</small></div></li></ul><p class="thanks">Sustainable behavior <span aria-hidden="true">↗</span></p></div>
           <blockquote class="support-quote reveal"><span class="quote-mark">“</span><p>Understand deeply.<br />Automate wisely.</p><div class="quote-sprig" aria-hidden="true"></div></blockquote>
@@ -2742,7 +2808,6 @@ html[data-theme="ink"] .studio-illustration {
   <script>
 (() => {
   const root = document.documentElement;
-  const header = document.querySelector('[data-header]');
   const navToggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
   const themeToggle = document.querySelector('[data-theme-toggle]');
@@ -2764,13 +2829,6 @@ html[data-theme="ink"] .studio-illustration {
   };
 
   syncThemeToggle();
-
-  const syncHeader = () => {
-    header?.classList.toggle('is-scrolled', window.scrollY > 12);
-  };
-
-  syncHeader();
-  window.addEventListener('scroll', syncHeader, { passive: true });
 
   navToggle?.addEventListener('click', () => {
     const open = navToggle.getAttribute('aria-expanded') === 'true';
