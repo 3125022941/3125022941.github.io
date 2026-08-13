@@ -30,6 +30,12 @@ class SiteStructureTests(unittest.TestCase):
         self.assertIn("data-focus-copy", html)
         self.assertIn('aria-pressed="true"', html)
 
+    def test_homepage_focus_picker_uses_meaningful_content_mapping(self):
+        html = SITE.read_text(encoding="utf-8")
+        for token in ("const focusContent = {", "notes.html", "#works", "#build"):
+            self.assertIn(token, html)
+        self.assertNotIn("data-amount", html)
+
     def test_fragment_links_resolve_and_confirmed_github_links_are_available(self):
         parser = LinkCollector()
         parser.feed(SITE.read_text(encoding="utf-8"))

@@ -2834,7 +2834,7 @@ html[data-theme="ink"] .studio-illustration {
   const themeToggle = document.querySelector('[data-theme-toggle]');
   const supportOptions = document.querySelector('[data-support-options]');
   const supportCTA = document.querySelector('[data-support-cta]');
-  const toast = document.querySelector('[data-toast]');
+  const focusCopies = document.querySelectorAll('[data-focus-copy]');
   const year = document.querySelector('[data-year]');
 
   if (year) year.textContent = new Date().getFullYear();
@@ -2904,26 +2904,50 @@ html[data-theme="ink"] .studio-illustration {
     revealItems.forEach((item) => item.classList.add('is-visible'));
   }
 
-  let toastTimer;
-  const showToast = () => {
-    if (!toast) return;
-    toast.classList.add('is-visible');
-    clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 3200);
+  const focusContent = {
+    learn: {
+      copy: '理解系统如何被设计，再把理解沉淀成笔记。',
+      label: '阅读 Agent Scaffold 笔记',
+      href: 'notes.html'
+    },
+    build: {
+      copy: '把理解转成可以运行、可以迭代的 Agent 工程。',
+      label: '查看已发布项目',
+      href: '#works'
+    },
+    automate: {
+      copy: '把可靠的重复动作交给可控的自动化流程。',
+      label: '查看系统路径',
+      href: '#build'
+    }
   };
 
   supportOptions?.addEventListener('click', (event) => {
-    const button = event.target.closest('button[data-amount]');
+    const button = event.target.closest('button[data-focus-option]');
     if (!button) return;
 
-    supportOptions.querySelectorAll('button').forEach((item) => item.classList.remove('is-selected'));
+    const focus = button.dataset.focus;
+    const content = focusContent[focus];
+    if (!content) return;
+
+    supportOptions.querySelectorAll('button').forEach((item) => {
+      const selected = item === button;
+      item.classList.toggle('is-selected', selected);
+      item.setAttribute('aria-pressed', String(selected));
+    });
     button.classList.add('is-selected');
 
-    const label = button.dataset.label || button.dataset.amount;
-    supportCTA.textContent = `当前方向 · ${label}`;
-  });
+    focusCopies.forEach((copy) => {
+      const selected = copy.dataset.focusCopyFor === focus;
+      copy.hidden = !selected;
+      if (selected) copy.textContent = content.copy;
+    });
 
-  supportCTA?.addEventListener('click', showToast);
+    if (supportCTA) {
+      supportCTA.textContent = content.label;
+      supportCTA.setAttribute('href', content.href);
+    }
+  });
 })();
 
   </script>
