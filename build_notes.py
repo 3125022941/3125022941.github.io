@@ -4,14 +4,28 @@ from __future__ import annotations
 
 import os
 import re
+from hashlib import sha256
 from html import escape
 from pathlib import Path
 
 import markdown
+import requests
 
 
 DEFAULT_SOURCE = Path(r"F:\obsidian_agent\agent\the way to the agent\项目4：脚手架")
 OUTPUT = Path(__file__).with_name("notes.html")
+ASSET_DIRECTORY = OUTPUT.parent / "assets" / "agent-scaffold-notes"
+IMAGE_PATTERN = re.compile(r"!\[([^\]]*)\]\((https://article-images\.zsxq\.com/[^)\s]+)\)")
+FENCE_PATTERN = re.compile(r"(?ms)^```(?P<language>[\w+-]*)[^\n]*\n(?P<code>.*?)^```[ \t]*")
+CODE_BLOCK_PATTERN = re.compile(r'<div class="codehilite">.*?</div>', re.DOTALL)
+LANGUAGE_LABELS = {
+    "java": "Java",
+    "yaml": "YAML",
+    "xml": "XML",
+    "json": "JSON",
+    "bash": "Shell",
+    "text": "Text",
+}
 
 
 def note_number(path: Path) -> int:
@@ -25,17 +39,84 @@ def note_title(path: Path) -> str:
     return re.sub(r"^\d+\s*", "", path.stem)
 
 
+def local_image_path(url: str) -> Path:
+    return ASSET_DIRECTORY / f"{sha256(url.encode()).hexdigest()}.png"
+
+
+def localize_images(source: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        alt, url = match.groups()
+        destination = local_image_path(url)
+        if not destination.exists():
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            if not response.headers.get("content-type", "").startswith("image/"):
+                raise RuntimeError(f"Expected an image from {url}")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(response.content)
+        return f"![{alt}](assets/agent-scaffold-notes/{destination.name})"
+
+    return IMAGE_PATTERN.sub(replace, source)
+
+
+def infer_language(code: str) -> str:
+    stripped = code.lstrip()
+    if re.search(r"\b(public|private|protected|class|interface|package)\b|^\s*@(?:Service|Override|Data)", code, re.MULTILINE):
+        return "java"
+    if stripped.startswith("<") and re.search(r"</?[\w:-]+", stripped):
+        return "xml"
+    if stripped.startswith(("{", "[")):
+        return "json"
+    if re.search(r"(?m)^\s*[\w-]+:\s*(?:$|\S)", code):
+        return "yaml"
+    if re.search(r"(?m)^\s*(?:#!/|mvn\s|git\s|curl\s|export\s|cd\s)", code):
+        return "bash"
+    return "text"
+
+
+def annotate_code_fences(source: str) -> tuple[str, list[str]]:
+    languages: list[str] = []
+
+    def replace(match: re.Match[str]) -> str:
+        language = match.group("language").lower() or infer_language(match.group("code"))
+        language = {"yml": "yaml", "shell": "bash", "sh": "bash"}.get(language, language)
+        if language not in LANGUAGE_LABELS:
+            language = "text"
+        languages.append(language)
+        return f"```{language}\n{match.group('code')}```"
+
+    return FENCE_PATTERN.sub(replace, source), languages
+
+
+def decorate_code_blocks(body: str, languages: list[str]) -> str:
+    index = 0
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal index
+        language = languages[index] if index < len(languages) else "text"
+        index += 1
+        return (
+            f'<div class="code-block" data-language="{language}">'
+            f'<div class="code-label">{LANGUAGE_LABELS[language]}</div>{match.group(0)}</div>'
+        )
+
+    return CODE_BLOCK_PATTERN.sub(replace, body)
+
+
 def render_note(path: Path) -> str:
     number = note_number(path)
     title = note_title(path)
     source = path.read_text(encoding="utf-8")
     # Public notes may show local endpoint examples, but never their credentials.
     source = re.sub(r"(?i)(apikey=)[A-Za-z0-9_-]+", r"\1REDACTED", source)
+    source = localize_images(source)
+    source, languages = annotate_code_fences(source)
     body = markdown.markdown(
         source,
-        extensions=["extra", "fenced_code", "sane_lists", "nl2br"],
+        extensions=["extra", "fenced_code", "codehilite", "sane_lists", "nl2br"],
         output_format="html5",
     )
+    body = decorate_code_blocks(body, languages)
     return f'''<article class="note-document" id="note-{number:02d}">
   <header class="document-header">
     <p>{number:02d} / Agent Scaffold</p>
@@ -117,14 +198,23 @@ def render_page(notes: list[Path]) -> str:
     .markdown-body a { color:var(--olive); text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--olive) 45%,transparent); text-underline-offset:3px; }
     .markdown-body strong { color:var(--ink); }
     .markdown-body code { padding:.14em .36em; color:var(--ink); background:var(--pale); border-radius:4px; font-family:var(--mono); font-size:.88em; }
-    .markdown-body pre { margin:23px 0; padding:18px; overflow:auto; color:#e9e7dd; background:#1b2119; border-radius:10px; line-height:1.6; }
-    .markdown-body pre code { padding:0; color:inherit; background:transparent; font-size:13px; }
+    .code-block { position:relative; margin:25px 0; overflow:hidden; background:#171d16; border:1px solid rgba(235,239,221,.12); border-radius:10px; box-shadow:0 12px 28px rgba(19,24,17,.1); }
+    .code-label { padding:8px 15px; color:#bec8a2; background:#222b20; border-bottom:1px solid rgba(235,239,221,.11); font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .code-block .codehilite { overflow:auto; }
+    .code-block pre { margin:0; padding:18px; overflow:visible; color:#e9e7dd; background:transparent; border-radius:0; line-height:1.65; }
+    .code-block pre code { padding:0; color:inherit; background:transparent; font-size:13px; }
+    .code-block .k,.code-block .kd,.code-block .kn,.code-block .kr,.code-block .kt { color:#d8bc79; }
+    .code-block .nc,.code-block .nf,.code-block .ne { color:#a9c99b; }
+    .code-block .s,.code-block .s1,.code-block .s2,.code-block .mi,.code-block .mf { color:#d9a99c; }
+    .code-block .c,.code-block .c1,.code-block .cm,.code-block .cp { color:#8f9a8a; font-style:italic; }
+    .code-block .na,.code-block .nt { color:#9bc5c8; }
+    .code-block .o,.code-block .p { color:#d5d8c9; }
     .markdown-body table { width:100%; margin:23px 0; border-collapse:collapse; font-size:14px; }
     .markdown-body th,.markdown-body td { padding:10px; text-align:left; border:1px solid var(--line); }
     .markdown-body th { color:var(--ink); background:var(--pale); }
     .site-footer { padding:28px 0; border-top:1px solid var(--line); color:var(--muted); font-size:12px; }
     @media (max-width:780px) { :root { --shell:min(100% - 32px,760px); } .series-head { padding:52px 0 41px; } .note-layout { display:block; padding-top:31px; } .toc { position:static; max-height:none; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 14px; margin-bottom:45px; } .toc > p { grid-column:1/-1; } .toc a { font-size:11px; } .note-document { padding-bottom:54px; margin-bottom:54px; } .markdown-body { font-size:15px; } }
-    @media (max-width:460px) { :root { --shell:min(100% - 28px,760px); } .back-link { display:none; } .toc { grid-template-columns:1fr; } .markdown-body pre { padding:14px; border-radius:7px; } }
+    @media (max-width:460px) { :root { --shell:min(100% - 28px,760px); } .back-link { display:none; } .toc { grid-template-columns:1fr; } .code-block pre { padding:14px; } }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition-duration:.01ms !important; animation-duration:.01ms !important; } .toc a.is-current { transform:none; } }
   </style>
 </head>

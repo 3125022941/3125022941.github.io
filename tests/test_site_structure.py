@@ -76,12 +76,16 @@ class SiteStructureTests(unittest.TestCase):
             "2025年11月27日",
             "增强装配-本地mcp",
             "增强装配-skills",
-            "Fk9607eOLBhpNS2N3nB2y_70lU2l",
         ):
             self.assertIn(source_text, notes_html)
         self.assertNotIn("DElk89iu8Ehhnbu", notes_html)
         self.assertNotIn("file:///Users/fuzhengwei", notes_html)
         self.assertNotIn('href="http:/#"', notes_html)
+        self.assertIn('src="assets/agent-scaffold-notes/', notes_html)
+        self.assertNotIn('src="https://article-images.zsxq.com/', notes_html)
+        for language in ("java", "yaml", "xml", "json"):
+            self.assertIn(f'class="code-block" data-language="{language}"', notes_html)
+        self.assertTrue((SITE.parent / "assets" / "agent-scaffold-notes").is_dir())
         index_html = SITE.read_text(encoding="utf-8")
         for href in (
             "notes.html#note-00",
