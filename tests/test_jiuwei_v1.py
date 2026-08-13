@@ -11,35 +11,33 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
     def setUpClass(cls):
         cls.html = SITE.read_text(encoding="utf-8")
 
-    def test_homepage_has_a_clear_project_archive_storyline(self):
+    def test_homepage_is_a_publication_workbench(self):
         for text in (
             "九尾",
             "Jiuwei",
-            "把好奇心做成",
-            "可以运行的项目。",
-            "我是九尾，关注 AI、开源、自动化与工程。",
-            "作品",
+            "发布",
+            "项目",
             "笔记",
-            "探索",
             "关于",
-            "当前构建",
-            "项目档案",
+            "最新发布",
+            "当前状态",
         ):
             self.assertIn(text, self.html)
-        for section_id in ("top", "featured", "works", "notes", "garden", "about"):
+        for section_id in ("publication", "projects", "notes", "about"):
             self.assertIn(f'id="{section_id}"', self.html)
+        self.assertIn('class="workbench shell"', self.html)
         self.assertNotIn('id="friends"', self.html)
         self.assertNotIn('id="support"', self.html)
 
     def test_published_projects_have_honest_destinations(self):
         works = re.search(
-            r'<section class="[^"]*section-works[^"]*" id="works".*?</section>',
+            r'<section class="[^"]*projects-module[^"]*" id="projects".*?</section>',
             self.html,
             re.DOTALL,
         )
         self.assertIsNotNone(works)
         cards = re.findall(
-            r'<article class="[^"]*work-card[^"]*reveal[^"]*">.*?</article>',
+            r'<article class="[^"]*project-card[^"]*">.*?</article>',
             works.group(0),
             re.DOTALL,
         )
@@ -92,7 +90,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
         self.assertRegex(open_nav.group("rules"), r"visibility:\s*visible;")
         self.assertRegex(open_nav.group("rules"), r"pointer-events:\s*auto;")
 
-    def test_mobile_hero_clips_decorative_orbit_without_page_overflow(self):
+    def test_mobile_workbench_stacks_without_page_overflow(self):
         mobile_rules = re.search(
             r"@media \(max-width: 780px\) \{(?P<rules>.*?)\n    \}",
             self.html,
@@ -101,7 +99,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
         self.assertIsNotNone(mobile_rules)
         self.assertRegex(
             mobile_rules.group("rules"),
-            r"\.hero-stamp\s*\{[^}]*overflow:\s*(?:hidden|clip);",
+            r"\.workbench\s*\{[^}]*grid-template-columns:\s*1fr;",
         )
 
     def test_old_template_identifiers_and_fake_contact_are_removed(self):

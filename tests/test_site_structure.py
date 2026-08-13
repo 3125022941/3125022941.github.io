@@ -36,6 +36,9 @@ class SiteStructureTests(unittest.TestCase):
         fragments = [href[1:] for href in parser.hrefs if href.startswith("#")]
         self.assertTrue(fragments)
         self.assertTrue(all(fragment in parser.ids for fragment in fragments))
+        for href in ("#publication", "#projects", "#notes", "#about"):
+            self.assertIn(href, parser.hrefs)
+            self.assertIn(href[1:], parser.ids)
         external = [href for href in parser.hrefs if href.startswith(("http://", "https://", "mailto:"))]
         self.assertEqual(
             external,
