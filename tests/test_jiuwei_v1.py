@@ -4,6 +4,9 @@ import unittest
 
 
 SITE = Path(__file__).resolve().parents[1] / "index.html"
+PROJECTS = Path(__file__).resolve().parents[1] / "projects.html"
+NOW = Path(__file__).resolve().parents[1] / "now.html"
+ABOUT = Path(__file__).resolve().parents[1] / "about.html"
 
 
 class JiuweiProjectArchiveTests(unittest.TestCase):
@@ -11,28 +14,30 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
     def setUpClass(cls):
         cls.html = SITE.read_text(encoding="utf-8")
 
-    def test_homepage_is_a_publication_workbench(self):
+    def test_homepage_is_a_functional_launchpad(self):
         for text in (
             "九尾",
             "Jiuwei",
-            "发布",
             "项目",
             "笔记",
+            "当前构建",
             "关于",
-            "最新发布",
             "当前状态",
         ):
             self.assertIn(text, self.html)
-        for section_id in ("publication", "projects", "notes", "about"):
-            self.assertIn(f'id="{section_id}"', self.html)
-        self.assertIn('class="workbench shell"', self.html)
+        for route in ("projects.html", "notes.html", "now.html", "about.html"):
+            self.assertIn(f'href="{route}"', self.html)
+        for removed_module in ("projects-module", "notes-module", "about-module"):
+            self.assertNotIn(removed_module, self.html)
         self.assertNotIn('id="friends"', self.html)
         self.assertNotIn('id="support"', self.html)
 
     def test_published_projects_have_honest_destinations(self):
+        self.assertTrue(PROJECTS.exists())
+        projects_html = PROJECTS.read_text(encoding="utf-8")
         works = re.search(
             r'<section class="[^"]*projects-module[^"]*" id="projects".*?</section>',
-            self.html,
+            projects_html,
             re.DOTALL,
         )
         self.assertIsNotNone(works)
@@ -46,13 +51,23 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             re.findall(r"<h3>(.*?)</h3>", "\n".join(cards), re.DOTALL),
             ["Agent Scaffold", "AI Architecture Canvas", "Agent Ops"],
         )
-        self.assertEqual(self.html.count("data-work-link"), 1)
-        self.assertIn('href="https://github.com/3125022941/agent-scaffold"', self.html)
-        self.assertIn("筹备中", self.html)
+        self.assertEqual(projects_html.count("data-work-link"), 1)
+        self.assertIn('href="https://github.com/3125022941/agent-scaffold"', projects_html)
+        self.assertIn("筹备中", projects_html)
 
     def test_current_build_uses_confirmed_agent_scaffold_facts(self):
+        self.assertTrue(NOW.exists())
+        now_html = NOW.read_text(encoding="utf-8")
         for text in ("Java 17", "Spring AI", "Google ADK", "DDD", "MCP", "Skills", "Workflow"):
-            self.assertIn(text, self.html)
+            self.assertIn(text, now_html)
+
+    def test_portal_function_pages_share_navigation_and_theme_control(self):
+        for page in (PROJECTS, NOW, ABOUT):
+            self.assertTrue(page.exists())
+            html = page.read_text(encoding="utf-8")
+            self.assertIn("data-theme-toggle", html)
+            for route in ("index.html", "projects.html", "notes.html", "now.html", "about.html"):
+                self.assertIn(f'href="{route}"', html)
 
     def test_theme_control_uses_a_persistent_sun_moon_state(self):
         for token in (

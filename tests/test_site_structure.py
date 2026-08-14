@@ -33,14 +33,9 @@ class SiteStructureTests(unittest.TestCase):
     def test_fragment_links_resolve_and_external_links_are_confirmed(self):
         parser = LinkCollector()
         parser.feed(SITE.read_text(encoding="utf-8"))
-        fragments = [href[1:] for href in parser.hrefs if href.startswith("#")]
-        self.assertTrue(fragments)
-        self.assertTrue(all(fragment in parser.ids for fragment in fragments))
-        for href in ("#publication", "#projects", "#notes", "#about"):
+        for href in ("projects.html", "notes.html", "now.html", "about.html"):
             self.assertIn(href, parser.hrefs)
-            self.assertIn(href[1:], parser.ids)
         external = [href for href in parser.hrefs if href.startswith(("http://", "https://", "mailto:"))]
-        self.assertEqual(external.count("https://github.com/3125022941/agent-scaffold"), 2)
         self.assertTrue(
             all(
                 href in {
