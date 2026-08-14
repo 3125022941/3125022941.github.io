@@ -7,6 +7,8 @@ SITE = Path(__file__).resolve().parents[1] / "index.html"
 PROJECTS = Path(__file__).resolve().parents[1] / "projects.html"
 NOW = Path(__file__).resolve().parents[1] / "now.html"
 ABOUT = Path(__file__).resolve().parents[1] / "about.html"
+PORTAL_CSS = Path(__file__).resolve().parents[1] / "portal.css"
+PORTAL_JS = Path(__file__).resolve().parents[1] / "portal.js"
 
 
 class JiuweiProjectArchiveTests(unittest.TestCase):
@@ -29,6 +31,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             self.assertIn(f'href="{route}"', self.html)
         for removed_module in ("projects-module", "notes-module", "about-module"):
             self.assertNotIn(removed_module, self.html)
+        self.assertIn("min-height: calc(100dvh - 128px)", PORTAL_CSS.read_text(encoding="utf-8"))
         self.assertNotIn('id="friends"', self.html)
         self.assertNotIn('id="support"', self.html)
 
@@ -70,6 +73,7 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
                 self.assertIn(f'href="{route}"', html)
 
     def test_theme_control_uses_a_persistent_sun_moon_state(self):
+        shared_source = self.html + PORTAL_CSS.read_text(encoding="utf-8") + PORTAL_JS.read_text(encoding="utf-8")
         for token in (
             "data-theme-toggle",
             'data-theme-icon="sun"',
@@ -78,15 +82,16 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             "切换到夜间模式",
             "切换到日间模式",
         ):
-            self.assertIn(token, self.html)
+            self.assertIn(token, shared_source)
 
     def test_closed_mobile_navigation_is_not_focusable(self):
+        css = PORTAL_CSS.read_text(encoding="utf-8")
         closed_nav = next(
             (
                 match
                 for match in re.finditer(
-                    r"\.side-nav\s*\{(?P<rules>.*?)\n\s*\}",
-                    self.html,
+                    r"\.side-nav\s*\{(?P<rules>[^}]*)\}",
+                    css,
                     re.DOTALL,
                 )
                 if "opacity: 0;" in match.group("rules")
@@ -94,8 +99,8 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
             None,
         )
         open_nav = re.search(
-            r"\.side-nav\.is-open\s*\{(?P<rules>.*?)\n\s*\}",
-            self.html,
+            r"\.side-nav\.is-open\s*\{(?P<rules>[^}]*)\}",
+            css,
             re.DOTALL,
         )
         self.assertIsNotNone(closed_nav)
@@ -106,15 +111,10 @@ class JiuweiProjectArchiveTests(unittest.TestCase):
         self.assertRegex(open_nav.group("rules"), r"pointer-events:\s*auto;")
 
     def test_mobile_workbench_stacks_without_page_overflow(self):
-        mobile_rules = re.search(
-            r"@media \(max-width: 780px\) \{(?P<rules>.*?)\n    \}",
-            self.html,
-            re.DOTALL,
-        )
-        self.assertIsNotNone(mobile_rules)
+        css = PORTAL_CSS.read_text(encoding="utf-8")
         self.assertRegex(
-            mobile_rules.group("rules"),
-            r"\.workbench\s*\{[^}]*grid-template-columns:\s*1fr;",
+            css,
+            r"@media \(max-width: 780px\)[\s\S]*?\.portal\s*\{[^}]*grid-template-columns:\s*1fr;",
         )
 
     def test_old_template_identifiers_and_fake_contact_are_removed(self):

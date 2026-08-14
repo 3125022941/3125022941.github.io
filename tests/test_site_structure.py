@@ -5,6 +5,8 @@ import unittest
 
 SITE = Path(__file__).resolve().parents[1] / "index.html"
 NOTES = Path(__file__).resolve().parents[1] / "notes.html"
+PORTAL_CSS = Path(__file__).resolve().parents[1] / "portal.css"
+PORTAL_JS = Path(__file__).resolve().parents[1] / "portal.js"
 
 
 class LinkCollector(HTMLParser):
@@ -25,10 +27,10 @@ class SiteStructureTests(unittest.TestCase):
     def test_homepage_keeps_notes_and_theme_contracts(self):
         html = SITE.read_text(encoding="utf-8")
         self.assertIn('href="notes.html"', html)
-        theme_rules = html.split(".theme-toggle, .nav-toggle {", 1)[1].split("}", 1)[0]
+        theme_rules = PORTAL_CSS.read_text(encoding="utf-8").split(".theme-toggle, .nav-toggle {", 1)[1].split("}", 1)[0]
         self.assertIn("width: 44px", theme_rules)
         self.assertIn("height: 44px", theme_rules)
-        self.assertNotIn("window.addEventListener('scroll'", html)
+        self.assertNotIn("window.addEventListener('scroll'", PORTAL_JS.read_text(encoding="utf-8"))
 
     def test_fragment_links_resolve_and_external_links_are_confirmed(self):
         parser = LinkCollector()
@@ -87,13 +89,7 @@ class SiteStructureTests(unittest.TestCase):
             self.assertIn(f'class="code-block" data-language="{language}"', notes_html)
         self.assertTrue((SITE.parent / "assets" / "agent-scaffold-notes").is_dir())
         index_html = SITE.read_text(encoding="utf-8")
-        for href in (
-            "notes.html#note-00",
-            "notes.html#note-06",
-            "notes.html#note-10",
-            "notes.html#note-15",
-        ):
-            self.assertIn(href, index_html)
+        self.assertIn('href="notes.html"', index_html)
 
     def test_readme_describes_jiuwei_site_and_local_preview(self):
         readme = (SITE.parent / "README.md").read_text(encoding="utf-8")
